@@ -2,42 +2,368 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quần áo</title>
+    <title>Security Panel</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #3a8fc4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+
+      .window {
+        width: 300px;
+        background: #f0f0f0;
+        border: 2px solid #a0a0a0;
+        border-radius: 6px 6px 4px 4px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Title bar */
+      .titlebar {
+        background: linear-gradient(to bottom, #4ea6d9, #2480b8);
+        padding: 5px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 4px 4px 0 0;
+        user-select: none;
+      }
+
+      .titlebar-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .titlebar-icon {
+        width: 16px;
+        height: 16px;
+        background: #ffcc00;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .titlebar span {
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+      }
+
+      .titlebar-buttons {
+        display: flex;
+        gap: 3px;
+      }
+
+      .tb-btn {
+        width: 18px;
+        height: 16px;
+        background: linear-gradient(to bottom, #e8e8e8, #c0c0c0);
+        border: 1px solid #888;
+        border-radius: 2px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .tb-btn:hover {
+        background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+      }
+      .tb-btn.close {
+        background: linear-gradient(to bottom, #e8504a, #c0302a);
+        color: white;
+      }
+      .tb-btn.close:hover {
+        background: linear-gradient(to bottom, #f06060, #d04040);
+      }
+
+      /* Content */
+      .content {
+        padding: 12px 14px 14px;
+      }
+
+      /* Security code row */
+      .code-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .code-label {
+        font-size: 12px;
+        color: #222;
+        white-space: nowrap;
+      }
+
+      .code-input {
+        flex: 1;
+        height: 22px;
+        border: 1px solid #888;
+        border-radius: 2px;
+        background: white;
+        padding: 0 4px;
+        font-size: 13px;
+        letter-spacing: 3px;
+        outline: none;
+        box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Keypad */
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+        margin-bottom: 14px;
+        padding: 0 10px;
+      }
+
+      .key-btn {
+        height: 34px;
+        border: 1px solid #a0a0a0;
+        border-radius: 3px;
+        background: linear-gradient(to bottom, #f8f8f8, #dcdcdc);
+        font-size: 13px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        transition: all 0.05s;
+      }
+
+      .key-btn:hover {
+        background: linear-gradient(to bottom, #ffffff, #e8e8e8);
+      }
+
+      .key-btn:active {
+        background: linear-gradient(to bottom, #d0d0d0, #e0e0e0);
+        box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+        transform: translateY(1px);
+      }
+
+      /* C button - yellow */
+      .key-btn.clear {
+        background: linear-gradient(to bottom, #ffe060, #e8c000);
+        border-color: #c0a000;
+        color: #006000;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .key-btn.clear:hover {
+        background: linear-gradient(to bottom, #fff080, #f0d020);
+      }
+
+      /* B button - light purple/blue */
+      .key-btn.backspace {
+        background: linear-gradient(to bottom, #d8d0f0, #b0a8d8);
+        border-color: #9090c0;
+        color: #6040a0;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .key-btn.backspace:hover {
+        background: linear-gradient(to bottom, #e8e0ff, #c0b8e8);
+      }
+
+      /* Access log */
+      .log-label {
+        font-size: 12px;
+        color: #222;
+        margin-bottom: 4px;
+      }
+
+      .log-list {
+        border: 1px solid #888;
+        background: white;
+        height: 90px;
+        overflow-y: auto;
+        font-size: 11px;
+        box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .log-item {
+        padding: 2px 5px;
+        display: flex;
+        justify-content: space-between;
+        color: #222;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: default;
+      }
+
+      .log-item:hover {
+        background: #e8f0ff;
+      }
+
+      .log-item.selected {
+        background: #316ac5;
+        color: white;
+      }
+
+      .log-item .log-time {
+        flex-shrink: 0;
+        margin-right: 8px;
+      }
+      .log-item .log-msg {
+        text-align: right;
+      }
+
+      /* Scrollbar styling */
+      .log-list::-webkit-scrollbar {
+        width: 14px;
+      }
+      .log-list::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-left: 1px solid #ccc;
+      }
+      .log-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(to right, #d0d0d0, #c0c0c0);
+        border: 1px solid #999;
+      }
+    </style>
   </head>
   <body>
-    <table>
-      <tr>
-        <thead>
-          <th>Tên sản phẩm</th>
-          <th>Giá sản phẩm</th>
-          <th>Số lượng còn lại</th>
-        </thead>
-      </tr>
-      <tbody>
-        <tr>
-          <td>Áo thun nam</td>
-          <td>100.000vnd</td>
-          <td>50</td>
-        </tr>
-        <tr>
-          <td>Áo thun nam</td>
-          <td>100.000vnd</td>
-          <td>50</td>
-        </tr>
-        <tr>
-          <td>Áo thun nam</td>
-          <td>100.000vnd</td>
-          <td>50</td>
-        </tr>
-      </tbody>
+    <div class="window">
+      <!-- Title bar -->
+      <div class="titlebar">
+        <div class="titlebar-left">
+          <div class="titlebar-icon">🔒</div>
+          <span>Security Panel</span>
+        </div>
+        <div class="titlebar-buttons">
+          <div class="tb-btn">_</div>
+          <div class="tb-btn">□</div>
+          <div class="tb-btn close">✕</div>
+        </div>
+      </div>
 
-      <tr>
-        <tfoot>
-          <td>Remark</td>
-          <td colspan="2">Chỉ thống kê sản phẩm trong kho</td>
-        </tfoot>
-      </tr>
-    </table>
+      <!-- Content -->
+      <div class="content">
+        <!-- Security code -->
+        <div class="code-row">
+          <span class="code-label">Security code</span>
+          <input
+            class="code-input"
+            type="password"
+            id="codeInput"
+            readonly
+            placeholder="****"
+            maxlength="10"
+          />
+        </div>
+
+        <!-- Keypad: 1 2 3 C / 4 5 6 B / 7 8 9 0 -->
+        <div class="keypad">
+          <button class="key-btn" onclick="pressKey('1')">1</button>
+          <button class="key-btn" onclick="pressKey('2')">2</button>
+          <button class="key-btn" onclick="pressKey('3')">3</button>
+          <button class="key-btn clear" onclick="pressC()">C</button>
+
+          <button class="key-btn" onclick="pressKey('4')">4</button>
+          <button class="key-btn" onclick="pressKey('5')">5</button>
+          <button class="key-btn" onclick="pressKey('6')">6</button>
+          <button class="key-btn backspace" onclick="pressB()">B</button>
+
+          <button class="key-btn" onclick="pressKey('7')">7</button>
+          <button class="key-btn" onclick="pressKey('8')">8</button>
+          <button class="key-btn" onclick="pressKey('9')">9</button>
+          <button class="key-btn" onclick="pressKey('0')">0</button>
+        </div>
+
+        <!-- Access log -->
+        <div class="log-label">Access log:</div>
+        <div class="log-list" id="logList">
+          <div class="log-item">
+            <span class="log-time">17/03/2009 8:05:48 AM</span>
+            <span class="log-msg">Restricted Access!</span>
+          </div>
+          <div class="log-item selected">
+            <span class="log-time">17/03/2009 8:05:55 AM</span>
+            <span class="log-msg">Scientists</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Mật khẩu hợp lệ
+      const ACCESS_CODES = {
+        1234: "Scientists",
+        5678: "Engineers",
+        "0000": "Administrators",
+      };
+
+      let currentCode = "";
+
+      function pressKey(digit) {
+        if (currentCode.length < 10) {
+          currentCode += digit;
+          document.getElementById("codeInput").value = currentCode;
+          if (currentCode.length === 4) {
+            setTimeout(checkAccess, 300);
+          }
+        }
+      }
+
+      function pressC() {
+        currentCode = "";
+        document.getElementById("codeInput").value = "";
+      }
+
+      function pressB() {
+        currentCode = currentCode.slice(0, -1);
+        document.getElementById("codeInput").value = currentCode;
+      }
+
+      function checkAccess() {
+        const now = new Date();
+        const timeStr =
+          now.toLocaleDateString("en-GB").replace(/\//g, "/") +
+          " " +
+          now.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+
+        const logList = document.getElementById("logList");
+
+        // Remove previous selection
+        logList
+          .querySelectorAll(".log-item")
+          .forEach((i) => i.classList.remove("selected"));
+
+        const item = document.createElement("div");
+        item.className = "log-item selected";
+
+        let msg = ACCESS_CODES[currentCode] || "Restricted Access!";
+
+        item.innerHTML = `<span class="log-time">${timeStr}</span><span class="log-msg">${msg}</span>`;
+        logList.appendChild(item);
+        logList.scrollTop = logList.scrollHeight;
+
+        currentCode = "";
+        document.getElementById("codeInput").value = "";
+      }
+    </script>
   </body>
 </html>
